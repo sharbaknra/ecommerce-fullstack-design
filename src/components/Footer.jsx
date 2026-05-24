@@ -43,8 +43,8 @@ export default function Footer() {
         <div>
           <h4 className="font-semibold mb-3">Get app</h4>
           <div className="flex flex-col gap-2">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="h-8" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-8" />
+            <img src="/src/assets/assets/assets/Layout/Misc/app store button.png" alt="App Store" className="w-32 object-contain" />
+            <img src="/src/assets/assets/assets/Layout/Misc/google play button.png" alt="Google Play" className="w-32 object-contain" />
           </div>
         </div>
       </div>
