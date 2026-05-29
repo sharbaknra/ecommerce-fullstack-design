@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Heart, Shield, Globe, ChevronRight } from 'lucide-react'
 import { getProducts, getProduct } from '../api'
+import { useCart } from '../context/CartContext'
 import { getImage } from '../imageMap'
 
 function StarRating({ rating }) {
@@ -19,7 +20,9 @@ export default function ProductDetails() {
   const [related, setRelated] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeImg, setActiveImg] = useState(null)
+  const { addToCart } = useCart()
   const [activeTab, setActiveTab] = useState('description')
+  const [added, setAdded] = useState(false)
 
   useEffect(() => {
     fetchProduct()
@@ -132,6 +135,7 @@ export default function ProductDetails() {
                 <p className="flex items-center gap-1"><Shield size={12} className="text-green-500" /> Verified Seller</p>
                 <p className="flex items-center gap-1"><Globe size={12} className="text-blue-500" /> Worldwide shipping</p>
               </div>
+              <button onClick={() => { addToCart(product); setAdded(true); setTimeout(() => setAdded(false), 2000) }} className="w-full bg-green-500 text-white text-xs py-2 rounded hover:bg-green-600 mb-2">{added ? "Added!" : "Add to cart"}</button>
               <button className="w-full bg-blue-600 text-white text-xs py-2 rounded hover:bg-blue-700 mb-2">Send inquiry</button>
               <button className="w-full border border-blue-600 text-blue-600 text-xs py-2 rounded hover:bg-blue-50">Seller's profile</button>
               <button className="flex items-center gap-1 text-xs text-gray-500 mt-3 hover:text-red-500 mx-auto">

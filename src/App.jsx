@@ -9,6 +9,7 @@ import Checkout from './pages/Checkout'
 import OrderConfirm from './pages/OrderConfirm'
 import Auth from './pages/Auth'
 import Profile from './pages/Profile'
+import Admin from './pages/Admin'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/order-confirm" element={<OrderConfirm />} />
           <Route path="/login" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </main>
       <Footer />

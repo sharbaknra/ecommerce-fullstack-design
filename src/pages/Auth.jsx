@@ -1,58 +1,75 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
+
+const BASE_URL = 'http://localhost:5000/api'
 
 export default function Auth() {
-  const [mode, setMode] = useState('login') // 'login' | 'register'
+  const [mode, setMode] = useState('login')
   const [showPass, setShowPass] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', password: '', confirm: '', agree: false
   })
 
+  const { login } = useAuth()
+  const navigate = useNavigate()
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+
+  const handleSubmit = async () => {
+    setError('')
+    if (mode === 'register' && form.password !== form.confirm) {
+      return setError('Passwords do not match')
+    }
+    setLoading(true)
+    try {
+      const endpoint = mode === 'login' ? '/auth/login' : '/auth/register'
+      const body = mode === 'login'
+        ? { email: form.email, password: form.password }
+        : { firstName: form.firstName, lastName: form.lastName, email: form.email, password: form.password }
+
+      const res = await fetch(`${BASE_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+      const data = await res.json()
+      if (!res.ok) return setError(data.error || 'Something went wrong')
+
+      login(data.token, data.user)
+      navigate(data.user.role === 'admin' ? '/admin' : '/')
+    } catch (err) {
+      setError('Server error. Please try again.')
+    }
+    setLoading(false)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-
-        {/* Card */}
         <div className="bg-white border rounded-lg p-8 shadow-sm">
-
-          {/* Logo */}
           <div className="text-center mb-6">
-            <div className="inline-flex items-center gap-2 mb-2">
+            <Link to="/" className="inline-flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-sm">B</div>
               <span className="text-lg font-bold text-gray-800">Brand</span>
-            </div>
+            </Link>
             <h1 className="text-xl font-bold text-gray-800">
               {mode === 'login' ? 'Sign in to your account' : 'Create an account'}
             </h1>
             <p className="text-sm text-gray-400 mt-1">
-              {mode === 'login' ? 'Welcome back! Please enter your details.' : 'Fill in the details below to get started.'}
+              {mode === 'login' ? 'Welcome back!' : 'Fill in the details below to get started.'}
             </p>
           </div>
 
-          {/* Social buttons */}
-          <div className="flex gap-3 mb-5">
-            <button className="flex-1 flex items-center justify-center gap-2 border rounded py-2 text-sm text-gray-600 hover:bg-gray-50">
-              <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
-              Google
-            </button>
-            <button className="flex-1 flex items-center justify-center gap-2 border rounded py-2 text-sm text-gray-600 hover:bg-gray-50">
-              <span className="text-blue-600 font-bold text-base">f</span>
-              Facebook
-            </button>
-          </div>
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-2 rounded mb-4">
+              {error}
+            </div>
+          )}
 
-          <div className="flex items-center gap-3 mb-5">
-            <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs text-gray-400">or continue with email</span>
-            <div className="flex-1 h-px bg-gray-200" />
-          </div>
-
-          {/* Form */}
           <div className="space-y-4">
-
             {mode === 'register' && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -109,30 +126,22 @@ export default function Auth() {
               </div>
             )}
 
-            {mode === 'register' && (
-              <label className="flex items-start gap-2 text-sm text-gray-600 cursor-pointer">
-                <input type="checkbox" checked={form.agree} onChange={e => set('agree', e.target.checked)}
-                  className="accent-blue-600 mt-0.5" />
-                I agree to the <span className="text-blue-600 hover:underline cursor-pointer">Terms of Service</span> and <span className="text-blue-600 hover:underline cursor-pointer">Privacy Policy</span>
-              </label>
-            )}
-
-            <Link to="/"
-              className="block w-full bg-blue-600 text-white text-center py-2.5 rounded text-sm font-medium hover:bg-blue-700">
-              {mode === 'login' ? 'Sign in' : 'Create account'}
-            </Link>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-2.5 rounded text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+              {loading ? 'Please wait...' : mode === 'login' ? 'Sign in' : 'Create account'}
+            </button>
           </div>
 
-          {/* Switch mode */}
           <p className="text-center text-sm text-gray-500 mt-5">
             {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-            <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+            <button onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError('') }}
               className="text-blue-600 font-medium hover:underline">
               {mode === 'login' ? 'Sign up' : 'Sign in'}
             </button>
           </p>
         </div>
-
       </div>
     </div>
   )
