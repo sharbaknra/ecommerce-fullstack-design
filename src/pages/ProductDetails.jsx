@@ -1,37 +1,8 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import { Heart, Shield, Globe, ChevronRight } from 'lucide-react'
-
-import camera from '../assets/assets/assets/Image/tech/camera.png'
-import earphone from '../assets/assets/assets/Image/tech/earphone.png'
-import gamingEarphone from '../assets/assets/assets/Image/tech/gaming earphone.png'
-import iphone from '../assets/assets/assets/Image/tech/iphone.png'
-import laptop from '../assets/assets/assets/Image/tech/laptop.png'
-import smartphone from '../assets/assets/assets/Image/tech/smart phone.png'
-import smartwatch from '../assets/assets/assets/Image/tech/smart watches.png'
-import tablet from '../assets/assets/assets/Image/tech/tablet.png'
-import shirt from '../assets/assets/assets/Layout/alibaba/Image/cloth/shirt.png'
-import bag from '../assets/assets/assets/Layout/alibaba/Image/cloth/bag.png'
-import jacket from '../assets/assets/assets/Layout/alibaba/Image/cloth/jacket.png'
-
-const thumbnails = [iphone, smartphone, tablet, smartwatch, earphone, camera]
-
-const relatedProducts = [
-  { img: tablet, name: 'Xiaomi Redmi 8 Original', price: '$32.00-$40.00' },
-  { img: smartwatch, name: 'Xiaomi Redmi 8 Original', price: '$32.00-$40.00' },
-  { img: earphone, name: 'Xiaomi Redmi 8 Original', price: '$32.00-$40.00' },
-  { img: laptop, name: 'Xiaomi Redmi 8 Original', price: '$32.00-$40.00' },
-  { img: camera, name: 'Xiaomi Redmi 8 Original', price: '$32.00-$40.00' },
-  { img: gamingEarphone, name: 'Xiaomi Redmi 8 Original', price: '$32.00-$40.00' },
-]
-
-const youMayLike = [
-  { img: jacket, name: 'Men Blazers Sets Elegant Formal', price: '$7.00 - $99.50' },
-  { img: shirt, name: 'Men Shirt Sleeve Polo Contrast', price: '$7.00 - $99.50' },
-  { img: smartwatch, name: 'Apple Watch Series Space Gray', price: '$7.00 - $99.50' },
-  { img: bag, name: 'Basketball Crew Socks Long Stuff', price: '$7.00 - $99.50' },
-  { img: iphone, name: 'New Summer Men\'s castrol T-Shirts', price: '$7.00 - $99.50' },
-]
+import { getProducts, getProduct } from '../api'
+import { getImage } from '../imageMap'
 
 function StarRating({ rating }) {
   const stars = Math.round(rating / 2)
@@ -43,8 +14,33 @@ function StarRating({ rating }) {
 }
 
 export default function ProductDetails() {
-  const [activeImg, setActiveImg] = useState(iphone)
+  const { id } = useParams()
+  const [product, setProduct] = useState(null)
+  const [related, setRelated] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [activeImg, setActiveImg] = useState(null)
   const [activeTab, setActiveTab] = useState('description')
+
+  useEffect(() => {
+    fetchProduct()
+  }, [id])
+
+  const fetchProduct = async () => {
+    setLoading(true)
+    try {
+      const data = await getProduct(id)
+      setProduct(data)
+      setActiveImg(data.image)
+      const all = await getProducts({ category: data.category })
+      setRelated(all.filter(p => p._id !== id).slice(0, 6))
+    } catch (err) {
+      console.error(err)
+    }
+    setLoading(false)
+  }
+
+  if (loading) return <div className="text-center py-20 text-gray-400">Loading product...</div>
+  if (!product) return <div className="text-center py-20 text-gray-400">Product not found.</div>
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -52,11 +48,9 @@ export default function ProductDetails() {
       <div className="max-w-7xl mx-auto px-4 py-2 text-xs text-gray-500 flex items-center gap-1">
         <Link to="/" className="hover:text-blue-600">Home</Link>
         <ChevronRight size={12} />
-        <span>Clothings</span>
+        <Link to="/products" className="hover:text-blue-600">Products</Link>
         <ChevronRight size={12} />
-        <span>Men's wear</span>
-        <ChevronRight size={12} />
-        <span className="text-gray-800">Summer clothing</span>
+        <span className="text-gray-800">{product.name}</span>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-2">
@@ -66,16 +60,16 @@ export default function ProductDetails() {
           {/* Image gallery */}
           <div className="flex flex-col gap-3 md:w-72 shrink-0">
             <div className="border rounded p-4 flex items-center justify-center h-64">
-              <img src={activeImg} alt="product" className="h-full object-contain" />
+              <img src={getImage(activeImg)} alt={product.name} className="h-full object-contain" />
             </div>
             <div className="flex gap-2 flex-wrap">
-              {thumbnails.map((t, i) => (
+              {[product.image, 'camera', 'laptop', 'smartwatch', 'earphone', 'tablet'].map((t, i) => (
                 <button
                   key={i}
                   onClick={() => setActiveImg(t)}
                   className={`border rounded p-1 w-12 h-12 flex items-center justify-center ${activeImg === t ? 'border-blue-500' : 'border-gray-200'}`}
                 >
-                  <img src={t} alt="" className="h-full object-contain" />
+                  <img src={getImage(t)} alt="" className="h-full object-contain" />
                 </button>
               ))}
             </div>
@@ -83,21 +77,20 @@ export default function ProductDetails() {
 
           {/* Product info */}
           <div className="flex-1">
-            <p className="text-green-500 text-sm font-medium mb-1">✔ In stock</p>
-            <h1 className="text-xl font-bold text-gray-800 mb-2">Mens Long Sleeve T-shirt Cotton Base Layer Slim Muscle</h1>
+            <p className="text-green-500 text-sm font-medium mb-1">✔ In stock ({product.stock} available)</p>
+            <h1 className="text-xl font-bold text-gray-800 mb-2">{product.name}</h1>
             <div className="flex items-center gap-3 mb-4 text-sm text-gray-500">
-              <StarRating rating={9.3} />
-              <span className="text-yellow-500 font-semibold">9.3</span>
-              <span>• 💬 32 reviews</span>
-              <span>• 🏆 154 sold</span>
+              <StarRating rating={product.rating} />
+              <span className="text-yellow-500 font-semibold">{product.rating}</span>
+              <span>• {product.orders} sold</span>
             </div>
 
             {/* Price tiers */}
             <div className="flex gap-2 mb-4">
               {[
-                { price: '$98.00', range: '50-100 pcs', active: true },
-                { price: '$90.00', range: '100-700 pcs' },
-                { price: '$78.00', range: '700+ pcs' },
+                { price: `$${product.price.toFixed(2)}`, range: '50-100 pcs', active: true },
+                { price: `$${(product.price * 0.9).toFixed(2)}`, range: '100-700 pcs' },
+                { price: `$${(product.price * 0.8).toFixed(2)}`, range: '700+ pcs' },
               ].map((tier) => (
                 <div key={tier.price} className={`border rounded px-3 py-2 text-sm ${tier.active ? 'border-yellow-400 bg-yellow-50' : ''}`}>
                   <p className={`font-bold ${tier.active ? 'text-red-500' : 'text-gray-800'}`}>{tier.price}</p>
@@ -110,10 +103,9 @@ export default function ProductDetails() {
             <div className="border-t pt-3 space-y-2 text-sm">
               {[
                 { label: 'Price', value: 'Negotiable' },
-                { label: 'Type', value: 'Classic shoes' },
-                { label: 'Material', value: 'Plastic material' },
-                { label: 'Design', value: 'Modern nice' },
-                { label: 'Customization', value: 'Customized logo and design custom packages' },
+                { label: 'Category', value: product.category },
+                { label: 'Shipping', value: product.shipping },
+                { label: 'Stock', value: `${product.stock} units` },
                 { label: 'Protection', value: 'Refund Policy' },
                 { label: 'Warranty', value: '2 years full warranty' },
               ].map((s) => (
@@ -151,11 +143,9 @@ export default function ProductDetails() {
 
         {/* Tabs + You may like */}
         <div className="flex flex-col md:flex-row gap-4 mt-4">
-
-          {/* Tabs */}
           <div className="flex-1 bg-white border rounded">
             <div className="flex border-b text-sm">
-              {['description','reviews','shipping','about seller'].map(tab => (
+              {['description', 'reviews', 'shipping', 'about seller'].map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -168,11 +158,10 @@ export default function ProductDetails() {
             <div className="p-4 text-sm text-gray-600">
               {activeTab === 'description' && (
                 <div>
-                  <p className="mb-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                  <p className="mb-4">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                  <p className="mb-3">{product.description}</p>
                   <table className="w-full text-xs border-collapse border border-gray-200 mb-4">
                     <tbody>
-                      {[['Model','#8786867'],['Style','Classic style'],['Certificate','ISO-898921212'],['Size','34mm x 450mm x 19mm'],['Memory','36GB RAM']].map(([k,v]) => (
+                      {[['Category', product.category], ['Stock', product.stock], ['Rating', product.rating], ['Orders', product.orders], ['Shipping', product.shipping]].map(([k, v]) => (
                         <tr key={k} className="border border-gray-200">
                           <td className="px-3 py-2 bg-gray-50 font-medium w-32">{k}</td>
                           <td className="px-3 py-2">{v}</td>
@@ -180,15 +169,10 @@ export default function ProductDetails() {
                       ))}
                     </tbody>
                   </table>
-                  <ul className="space-y-1 text-xs">
-                    {['Some great feature name here','Lorem ipsum dolor sit amet, consectetur','Duis aute irure dolor in reprehenderit','Some great feature name here'].map((f,i) => (
-                      <li key={i} className="flex items-center gap-2"><span className="text-gray-400">✓</span>{f}</li>
-                    ))}
-                  </ul>
                 </div>
               )}
               {activeTab === 'reviews' && <p>No reviews yet.</p>}
-              {activeTab === 'shipping' && <p>Ships worldwide within 5-10 business days.</p>}
+              {activeTab === 'shipping' && <p>Ships worldwide within 5-10 business days. {product.shipping}.</p>}
               {activeTab === 'about seller' && <p>Guanjoi Trading LLC — Verified seller based in Germany, Berlin.</p>}
             </div>
           </div>
@@ -197,12 +181,12 @@ export default function ProductDetails() {
           <div className="md:w-48 shrink-0 bg-white border rounded p-3">
             <h4 className="font-semibold text-sm mb-3">You may like</h4>
             <div className="space-y-3">
-              {youMayLike.map((item, i) => (
-                <Link to={`/products/${i+10}`} key={i} className="flex gap-2 hover:opacity-80">
-                  <img src={item.img} alt={item.name} className="w-12 h-12 object-contain shrink-0" />
+              {related.map((item) => (
+                <Link to={`/products/${item._id}`} key={item._id} className="flex gap-2 hover:opacity-80">
+                  <img src={getImage(item.image)} alt={item.name} className="w-12 h-12 object-contain shrink-0" />
                   <div>
                     <p className="text-xs text-gray-700 line-clamp-2">{item.name}</p>
-                    <p className="text-xs text-gray-400">{item.price}</p>
+                    <p className="text-xs text-gray-400">${item.price.toFixed(2)}</p>
                   </div>
                 </Link>
               ))}
@@ -211,18 +195,20 @@ export default function ProductDetails() {
         </div>
 
         {/* Related products */}
-        <div className="bg-white border rounded p-4 mt-4">
-          <h3 className="font-semibold text-gray-800 mb-3">Related products</h3>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-            {relatedProducts.map((p, i) => (
-              <Link to={`/products/${i+20}`} key={i} className="text-center hover:opacity-80">
-                <img src={p.img} alt={p.name} className="h-20 w-full object-contain mb-2" />
-                <p className="text-xs text-gray-700">{p.name}</p>
-                <p className="text-xs text-gray-400">{p.price}</p>
-              </Link>
-            ))}
+        {related.length > 0 && (
+          <div className="bg-white border rounded p-4 mt-4">
+            <h3 className="font-semibold text-gray-800 mb-3">Related products</h3>
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+              {related.map((p) => (
+                <Link to={`/products/${p._id}`} key={p._id} className="text-center hover:opacity-80">
+                  <img src={getImage(p.image)} alt={p.name} className="h-20 w-full object-contain mb-2" />
+                  <p className="text-xs text-gray-700">{p.name}</p>
+                  <p className="text-xs text-gray-400">${p.price.toFixed(2)}</p>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Discount banner */}
         <div className="rounded bg-blue-600 flex items-center justify-between px-8 py-6 mt-4 mb-6">
