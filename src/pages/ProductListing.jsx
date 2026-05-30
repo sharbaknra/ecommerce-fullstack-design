@@ -88,7 +88,7 @@ export default function ProductListing() {
             </ul>
           </SidebarSection>
 
-          <SidebarSection title="Brands">
+          <SidebarSection title="The Sha Stores">
             <ul className="text-sm text-gray-600 space-y-2">
               {brands.map(b => (
                 <li key={b} className="flex items-center gap-2">
@@ -123,7 +123,7 @@ export default function ProductListing() {
 
           <SidebarSection title="Condition">
             <ul className="text-sm text-gray-600 space-y-2">
-              {['Any', 'Refurbished', 'Brand new', 'Old items'].map(c => (
+              {['Any', 'Refurbished', 'The Sha Store new', 'Old items'].map(c => (
                 <li key={c} className="flex items-center gap-2">
                   <input type="radio" name="condition" checked={condition === c.toLowerCase()} onChange={() => setCondition(c.toLowerCase())} className="accent-blue-600" />
                   <span>{c}</span>

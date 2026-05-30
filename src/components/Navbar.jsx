@@ -18,7 +18,7 @@ export default function Navbar() {
     <header>
       <div className="border-b px-6 py-3 flex items-center gap-4">
         <Link to="/" className="flex items-center gap-2 mr-4">
-          <img src={logo} alt="Brand" className="h-8" />
+          <img src={logo} alt="The Sha Store" className="h-8" />
         </Link>
 
         <div className="flex flex-1 max-w-2xl">

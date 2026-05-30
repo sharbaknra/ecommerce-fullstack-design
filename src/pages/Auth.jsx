@@ -53,7 +53,7 @@ export default function Auth() {
           <div className="text-center mb-6">
             <Link to="/" className="inline-flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-sm">B</div>
-              <span className="text-lg font-bold text-gray-800">Brand</span>
+              <span className="text-lg font-bold text-gray-800">The Sha Store</span>
             </Link>
             <h1 className="text-xl font-bold text-gray-800">
               {mode === 'login' ? 'Sign in to your account' : 'Create an account'}

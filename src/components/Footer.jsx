@@ -15,7 +15,7 @@ export default function Footer() {
 
       <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-6 gap-6 text-sm">
         <div className="col-span-2 md:col-span-1">
-          <img src={logo} alt="Brand" className="h-8 mb-3" />
+          <img src={logo} alt="The Sha Store" className="h-8 mb-3" />
           <p className="text-gray-500 text-xs mb-3">Best information about the company goes here but now lorem ipsum is</p>
           <div className="flex gap-2 text-gray-400">
             {['f','t','in','yt','ig'].map((s) => (
