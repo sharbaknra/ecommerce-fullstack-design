@@ -120,7 +120,7 @@ export default function Home() {
           </ul>
         </div>
         <div className="flex-1 rounded overflow-hidden relative min-h-48">
-          <img src={banner} alt="Banner" className="w-full h-full object-cover rounded" />
+          <img src={banner} alt="Banner" className="w-full h-48 md:h-full object-cover rounded" />
           <div className="absolute inset-0 flex flex-col justify-center px-8">
             <p className="text-gray-600 text-sm">Latest trending</p>
             <h2 className="text-2xl font-bold text-gray-800">Electronic items</h2>
