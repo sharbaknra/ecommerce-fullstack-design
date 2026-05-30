@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import logo from '../assets/assets/assets/Layout/Brand/logo-colored.png'
+import logo from '../assets/sha_store_logo.png'
 
 export default function Footer() {
   return (
@@ -50,7 +50,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t px-6 py-4 flex justify-between items-center text-xs text-gray-400">
-        <span>© 2023 Ecommerce.</span>
+        <span>© 2026 The Sha Store.</span>
         <span>🇺🇸 English ▾</span>
       </div>
     </footer>
