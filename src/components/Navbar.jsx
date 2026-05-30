@@ -16,23 +16,35 @@ export default function Navbar() {
 
   return (
     <header>
-      <div className="border-b px-6 py-3 flex items-center gap-4">
-        <Link to="/" className="flex items-center gap-2 mr-4">
-          <img src={logo} alt="The Sha Store" className="h-12" />
-        </Link>
+      <div className="border-b px-4 md:px-6 py-3 flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+        <div className="flex items-center justify-between gap-3 md:contents">
+          <Link to="/" className="shrink-0">
+            <img
+              src={logo}
+              alt="The Sha Store"
+              className="h-14 w-auto max-w-[180px] object-contain md:h-12 md:max-w-none"
+            />
+          </Link>
 
-        <div className="flex flex-1 max-w-2xl">
-          <input type="text" placeholder="Search" className="border border-gray-300 rounded-l px-4 py-2 w-full text-sm focus:outline-none" />
-          <select className="border border-gray-300 border-l-0 px-2 py-2 text-sm bg-white">
+          {/* Mobile icons */}
+          <div className="flex md:hidden items-center gap-4 text-gray-600">
+            <Link to="/cart"><ShoppingCart size={22} /></Link>
+            <Link to="/login"><User size={22} /></Link>
+          </div>
+        </div>
+
+        <div className="flex flex-1 max-w-2xl w-full min-w-0">
+          <input type="text" placeholder="Search" className="border border-gray-300 rounded-l px-3 md:px-4 py-2 w-full min-w-0 text-sm focus:outline-none" />
+          <select className="hidden sm:block border border-gray-300 border-l-0 px-2 py-2 text-sm bg-white shrink-0">
             <option>All category</option>
             <option>Electronics</option>
             <option>Clothing</option>
           </select>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-r text-sm hover:bg-blue-700">Search</button>
+          <button className="bg-blue-600 text-white px-3 md:px-4 py-2 rounded-r text-sm hover:bg-blue-700 shrink-0">Search</button>
         </div>
 
         {/* Desktop icons */}
-        <div className="hidden md:flex items-center gap-5 ml-auto text-gray-600 text-xs">
+        <div className="hidden md:flex items-center gap-5 ml-auto text-gray-600 text-xs shrink-0">
           {user ? (
             <>
               <Link to="/profile" className="flex flex-col items-center hover:text-blue-600">
@@ -60,12 +72,6 @@ export default function Navbar() {
             <ShoppingCart size={20} />
             <span>My cart {cartCount > 0 && `(${cartCount})`}</span>
           </Link>
-        </div>
-
-        {/* Mobile icons */}
-        <div className="flex md:hidden items-center gap-4 ml-auto text-gray-600">
-          <Link to="/cart"><ShoppingCart size={22} /></Link>
-          <Link to="/login"><User size={22} /></Link>
         </div>
       </div>
 
