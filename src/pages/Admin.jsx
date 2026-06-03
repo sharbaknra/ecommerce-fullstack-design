@@ -4,7 +4,7 @@ import { Plus, Pencil, Trash2, X, Check } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { getImage } from '../imageMap'
 
-const BASE_URL = 'http://localhost:5000/api'
+const BASE_URL = 'https://ecommerce-fullstack-design-production-0d0d.up.railway.app/api'
 
 const emptyForm = {
   name: '', price: '', oldPrice: '', image: 'camera',

@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
-const BASE_URL = 'http://localhost:5000/api'
+const BASE_URL = 'https://ecommerce-fullstack-design-production-0d0d.up.railway.app/api'
 
 export default function Auth() {
   const [mode, setMode] = useState('login')
