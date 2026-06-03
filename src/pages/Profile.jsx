@@ -1,31 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Package, Heart, Settings, LogOut, ChevronRight, Star } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
+import { getImage } from '../imageMap'
 
-import shirt from '../assets/assets/assets/Layout/alibaba/Image/cloth/shirt.png'
-import bag from '../assets/assets/assets/Layout/alibaba/Image/cloth/bag.png'
-import jacket from '../assets/assets/assets/Layout/alibaba/Image/cloth/jacket.png'
 import smartwatch from '../assets/assets/assets/Image/tech/smart watches.png'
 import laptop from '../assets/assets/assets/Image/tech/laptop.png'
+import jacket from '../assets/assets/assets/Layout/alibaba/Image/cloth/jacket.png'
 
 const orders = [
   {
     id: '#ORD-2026-84721', date: 'May 24, 2026', status: 'Processing', total: 952.41,
     items: [
-      { img: shirt, name: 'T-shirts with multiple colors', qty: 9, price: 78.99 },
-      { img: bag, name: 'Bag with multiple colors', qty: 3, price: 39.00 },
-      { img: jacket, name: 'Jacket for men', qty: 1, price: 170.50 },
+      { img: smartwatch, name: 'Smart watch series 6', qty: 1, price: 199.00 },
+      { img: laptop, name: 'Laptop pro 15 inch', qty: 1, price: 349.00 },
     ]
   },
   {
     id: '#ORD-2026-71032', date: 'May 10, 2026', status: 'Delivered', total: 199.00,
     items: [
       { img: smartwatch, name: 'Smart watch series 6', qty: 1, price: 199.00 },
-    ]
-  },
-  {
-    id: '#ORD-2026-60418', date: 'April 28, 2026', status: 'Delivered', total: 349.00,
-    items: [
-      { img: laptop, name: 'Laptop pro 15 inch', qty: 1, price: 349.00 },
     ]
   },
 ]
@@ -44,22 +37,22 @@ const tabs = [
 ]
 
 export default function Profile() {
+  const { user, logout } = useAuth()
   const [tab, setTab] = useState('orders')
+  const [expanded, setExpanded] = useState(null)
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '' })
 
   useEffect(() => {
     if (user) {
       setForm(f => ({ ...f, firstName: user.firstName || '', lastName: user.lastName || '', email: user.email || '' }))
     }
   }, [user])
-  const [expanded, setExpanded] = useState(null)
-  const { user } = useAuth()
-  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '' })
+
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
   return (
     <div className="bg-gray-50 min-h-screen py-8">
       <div className="max-w-5xl mx-auto px-4">
-
         <div className="flex flex-col md:flex-row gap-6">
 
           {/* Sidebar */}
@@ -68,8 +61,8 @@ export default function Profile() {
               <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-600 mx-auto mb-2">
                 {user?.firstName?.[0] || 'U'}{user?.lastName?.[0] || ''}
               </div>
-              <p className="font-semibold text-gray-800">{form.firstName} {form.lastName}</p>
-              <p className="text-xs text-gray-400">{form.email}</p>
+              <p className="font-semibold text-gray-800">{user?.firstName} {user?.lastName}</p>
+              <p className="text-xs text-gray-400">{user?.email}</p>
             </div>
 
             <div className="bg-white border rounded-lg overflow-hidden">
@@ -82,7 +75,7 @@ export default function Profile() {
                   <ChevronRight size={14} className="ml-auto text-gray-300" />
                 </button>
               ))}
-              <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-500 hover:bg-red-50">
+              <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-500 hover:bg-red-50">
                 <LogOut size={16} />
                 Sign out
               </button>
@@ -99,7 +92,6 @@ export default function Profile() {
                 <div className="space-y-4">
                   {orders.map(order => (
                     <div key={order.id} className="bg-white border rounded-lg overflow-hidden">
-                      {/* Order header */}
                       <div className="flex items-center justify-between px-5 py-4 border-b">
                         <div>
                           <p className="text-sm font-bold text-gray-800">{order.id}</p>
@@ -116,8 +108,6 @@ export default function Profile() {
                           </button>
                         </div>
                       </div>
-
-                      {/* Order items (expanded) */}
                       {expanded === order.id && (
                         <div className="divide-y px-5">
                           {order.items.map((item, i) => (
@@ -157,9 +147,7 @@ export default function Profile() {
                       <img src={item.img} alt={item.name} className="h-28 w-full object-contain mb-3" />
                       <p className="text-sm font-semibold text-gray-800">${item.price.toFixed(2)}</p>
                       <p className="text-xs text-gray-500 mb-3 line-clamp-2">{item.name}</p>
-                      <button className="w-full bg-blue-600 text-white text-xs py-1.5 rounded hover:bg-blue-700">
-                        Add to cart
-                      </button>
+                      <button className="w-full bg-blue-600 text-white text-xs py-1.5 rounded hover:bg-blue-700">Add to cart</button>
                     </div>
                   ))}
                 </div>
@@ -181,18 +169,6 @@ export default function Profile() {
                       </div>
                     ))}
                   </div>
-
-                  <h3 className="font-semibold text-gray-700 mb-4 border-t pt-4">Change password</h3>
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    {['Current password', 'New password', 'Confirm new password'].map(label => (
-                      <div key={label} className={label === 'Current password' ? 'col-span-2' : ''}>
-                        <label className="text-xs text-gray-500 mb-1 block">{label}</label>
-                        <input type="password" placeholder="••••••••"
-                          className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-400" />
-                      </div>
-                    ))}
-                  </div>
-
                   <button className="bg-blue-600 text-white px-6 py-2 rounded text-sm hover:bg-blue-700 font-medium">
                     Save changes
                   </button>
