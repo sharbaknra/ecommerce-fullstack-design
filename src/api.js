@@ -35,3 +35,4 @@ export const deleteProduct = async (id) => {
   })
   return res.json()
 }
+# Railway API
