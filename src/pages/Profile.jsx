@@ -46,7 +46,8 @@ const tabs = [
 export default function Profile() {
   const [tab, setTab] = useState('orders')
   const [expanded, setExpanded] = useState(null)
-  const [form, setForm] = useState({ firstName: 'John', lastName: 'Doe', email: 'john@example.com', phone: '+1 234 567 890' })
+  const { user } = useAuth()
+  const [form, setForm] = useState({ firstName: user?.firstName || '', lastName: user?.lastName || '', email: user?.email || '', phone: '' })
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
   return (
@@ -59,7 +60,7 @@ export default function Profile() {
           <div className="md:w-60 shrink-0">
             <div className="bg-white border rounded-lg p-5 mb-4 text-center">
               <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-600 mx-auto mb-2">
-                JD
+                {user?.firstName?.[0]}{user?.lastName?.[0]}
               </div>
               <p className="font-semibold text-gray-800">{form.firstName} {form.lastName}</p>
               <p className="text-xs text-gray-400">{form.email}</p>
