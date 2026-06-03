@@ -1,3 +1,4 @@
+import logo from '../assets/sha_store_logo.png'
 import { Link, useNavigate } from 'react-router-dom'
 import { ShoppingCart, User, MessageSquare, Package } from 'lucide-react'
 import { useAuth } from "../context/AuthContext"
