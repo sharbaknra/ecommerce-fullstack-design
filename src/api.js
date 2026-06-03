@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5000/api'
+const BASE_URL = 'https://ecommerce-fullstack-design-production-0d0d.up.railway.app/api'
 
 export const getProducts = async (params = {}) => {
   const query = new URLSearchParams(params).toString()
@@ -35,4 +35,3 @@ export const deleteProduct = async (id) => {
   })
   return res.json()
 }
-# Railway API
