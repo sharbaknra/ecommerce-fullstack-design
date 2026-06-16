@@ -1,4 +1,4 @@
-import logo from '../assets/sha_store_logo.png'
+import logo from '../assets/assets/assets/Layout/Brand/logo-colored.png'
 import { Link } from 'react-router-dom'
 
 export default function Footer() {
